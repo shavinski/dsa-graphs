@@ -16,16 +16,30 @@ class Graph {
   }
 
   /** add Node instance and add it to nodes property on graph. */
-  addVertex(vertex) { }
+  addVertex(vertex) { 
+    // add single node to this.nodes on graph class 
+    this.nodes.add(vertex);
+  }
 
   /** add array of new Node instances and adds to them to nodes property. */
-  addVertices(vertexArray) { }
+  addVertices(vertexArray) { 
+    for (let vertex of vertexArray) {
+      this.nodes.add(vertex);
+    }
+  }
 
   /** add edge between vertices v1,v2 */
-  addEdge(v1, v2) { }
+  addEdge(v1, v2) {
+    // create the lines between v1 and v2
+    v1.adjacent.add(v2);
+    v2.adjacent.add(v1);
+  }
 
   /** remove edge between vertices v1,v2 */
-  removeEdge(v1, v2) { }
+  removeEdge(v1, v2) { 
+    v1.adjacent.delete(v2);
+    v2.adjacent.delete(v1);
+  }
 
   /** remove vertex from graph:
    *
