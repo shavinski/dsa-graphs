@@ -56,23 +56,24 @@ class Graph {
 
   /** traverse graph with DFS and returns array of Node values */
   depthFirstSearch(start) {
-    const values = [start.value];
-    const toVisitStack = [start];
-    const seen = new Set(toVisitStack);
+    const values = [];           
+    const toVisitStack = [start];            
+    const seen = new Set(toVisitStack);      
 
     while (toVisitStack.length > 0) {
 
-      let current = toVisitStack.pop();
+      let current = toVisitStack.pop();      
+      values.push(current.value);
 
-      for (let neighborVertex of current.adjacent) {
+      for (let neighborVertex of current.adjacent) {   
         if (!seen.has(neighborVertex)) {
-          seen.add(neighborVertex)
+          seen.add(neighborVertex)                     
           toVisitStack.push(neighborVertex)
-          values.push(neighborVertex.value)
         }
-        console.log(toVisitStack)
       }
     }
+
+    console.log(values);
     return values;
   }
 
@@ -83,10 +84,140 @@ class Graph {
   //
 
   /** traverse graph with BDS and returns array of Node values */
-  breadthFirstSearch(start) { }
+  breadthFirstSearch(start) { 
+    const values = [];           
+    const toVisitStack = [start];            
+    const seen = new Set(toVisitStack);      
+
+    while (toVisitStack.length > 0) {
+
+      let current = toVisitStack.shift();      
+      values.push(current.value);
+
+      for (let neighborVertex of current.adjacent) {   
+        if (!seen.has(neighborVertex)) {
+          seen.add(neighborVertex)                     
+          toVisitStack.push(neighborVertex)
+        }
+      }
+    }
+
+    console.log(values);
+    return values;
+  }
 
   /** find the distance of the shortest path from the start vertex to the end vertex */
-  distanceOfShortestPath(start, end) { }
+  distanceOfShortestPath(start, end, seen = new Set([start]), counter = 0) {
+    if (start === end) return true;
+    debugger;
+
+    for (let neighbor of start.adjacent) {
+      if (!seen.has(neighbor)) {
+        seen.add(neighbor);
+        counter += 1;
+        if (this.distanceOfShortestPath(neighbor, end, seen, counter)) {
+          return counter;
+        }
+      }
+    }
+    
+    console.log(counter);
+    return counter;
+  }
 }
 
+let graph = new Graph();
+
+    let r = new Node("R");
+    let i = new Node("I");
+    let t = new Node("T");
+    let h = new Node("H");
+    let m = new Node("M");
+
+    graph.addVertices([r, i, t, h, m]);
+
+    graph.addEdge(r, i);
+    graph.addEdge(r, t);
+    graph.addEdge(r, h);
+    graph.addEdge(i, t);
+    graph.addEdge(t, h);
+    graph.addEdge(h, m);
+
+graph.distanceOfShortestPath(r,m)
+
 module.exports = { Graph, Node }
+
+
+/**
+ * p1 = marge
+ * p2 = grampa
+ * seen = [marge]
+ * 
+ * if (p1 === p2) return true
+ * 
+ * [marge]
+ * p1.adjacent(marge) = [homer, maggie]
+ * 
+ * if neighbor not in seen 
+ *    seen = [marge, homer]
+ *        if (true) // pin
+ *            return true 
+ * 
+ * 
+ * 
+ * 
+ * second call of function 
+ * p1 = homer
+ * p2 = grampa
+ * seen = [marge, homer]
+ * 
+ * p1.adjacent(homer) = [marge, maggie, lisa]
+ * 
+ * if neighbor not in seen 
+ *  p1.adjacent(homer) [maggie, lisa]
+ *  if !seen
+ *    seen = [marge, homer, maggie]
+ *        if (true) // pin
+ *            return true 
+ * 
+ * third call of function 
+ * p1 = maggie
+ * p2 = grampa
+ * seen = [marge, homer, maggie]
+ * 
+ * p1.adjacent(maggie) = [marge, lisa, homer]
+ * 
+ * if neighbor not in seen 
+ *  p1.adjacent(maggie) arge, lisa, homer]
+ *  if !seen
+ *    seen = [marge, homer, maggie, lisa]
+ *        if (true) // pin
+ *            return true 
+ * 
+ * fourth call of function 
+ * p1 = lisa
+ * p2 = grampa
+ * seen = [marge, homer, maggie, lisa]
+ * 
+ * p1.adjacent(lisa) = [grampa, maggie, homer]
+ * 
+ * if neighbor not in seen 
+ *  if !seen
+ *    seen = [marge, homer, maggie, lisa, grampa]
+ *        if (true) // pin
+ *            return true 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  fifth call of function 
+ * p1 = grampa
+ * p2 = grampa
+ * seen = [marge, homer, maggie, lisa, grampa]
+ * 
+ * p1.adjacent(grampa) = [lisa]
+ * 
+ * if (p1 === p2) return true;
+ *  -> return true
+ */
