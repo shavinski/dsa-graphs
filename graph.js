@@ -56,18 +56,18 @@ class Graph {
 
   /** traverse graph with DFS and returns array of Node values */
   depthFirstSearch(start) {
-    const values = [];           
-    const toVisitStack = [start];            
-    const seen = new Set(toVisitStack);      
+    const values = [];
+    const toVisitStack = [start];
+    const seen = new Set(toVisitStack);
 
     while (toVisitStack.length > 0) {
 
-      let current = toVisitStack.pop();      
+      let current = toVisitStack.pop();
       values.push(current.value);
 
-      for (let neighborVertex of current.adjacent) {   
+      for (let neighborVertex of current.adjacent) {
         if (!seen.has(neighborVertex)) {
-          seen.add(neighborVertex)                     
+          seen.add(neighborVertex)
           toVisitStack.push(neighborVertex)
         }
       }
@@ -84,19 +84,19 @@ class Graph {
   //
 
   /** traverse graph with BDS and returns array of Node values */
-  breadthFirstSearch(start) { 
-    const values = [];           
-    const toVisitStack = [start];            
-    const seen = new Set(toVisitStack);      
+  breadthFirstSearch(start) {
+    const values = [];
+    const toVisitStack = [start];
+    const seen = new Set(toVisitStack);
 
     while (toVisitStack.length > 0) {
 
-      let current = toVisitStack.shift();      
+      let current = toVisitStack.shift();
       values.push(current.value);
 
-      for (let neighborVertex of current.adjacent) {   
+      for (let neighborVertex of current.adjacent) {
         if (!seen.has(neighborVertex)) {
-          seen.add(neighborVertex)                     
+          seen.add(neighborVertex)
           toVisitStack.push(neighborVertex)
         }
       }
@@ -107,43 +107,101 @@ class Graph {
   }
 
   /** find the distance of the shortest path from the start vertex to the end vertex */
-  distanceOfShortestPath(start, end, seen = new Set([start]), counter = 0) {
-    if (start === end) return true;
-    debugger;
+  distanceOfShortestPath(start, end) {
+    /**
+     * start = R
+     * end = M
+     * steps = 0
+     * 
+     * // do we need the visit stack with the vertex ?
+     * visitStack => [M] 
+     * seen => [R, I, T, H, M]
+     * 
+     * This vertex array has all adjacent nodes to Start and we will 
+     * test each path starting with going to I, then T, then H
+     * vertex => [I, T, H] <=> R.adjacent
+     * shortest => Infinity
+     * 
+     * while(vertex.length > 0) // true [T, H]
+     * 
+     *  current = visitStack.unshift() => H
+     *  increase our steps steps++ steps -> 2
+     * 
+     * 
+     *  maybe need to have current get added to seen here 
+     *  
+     * if (current === end (M))
+     *    let firstEl = T vertex shift first element (get rid of I) => [H]
+     *    shortest = steps becomes shortest if it is less than => shortest = 3
+     *    steps = 0 (set to zero to test the other paths)
+     *    // these need to be reset 
+     *    visitStack = [start, ]   need the current inside
+     *    ORIGINAL SEEN       NEW SEEN 
+     *    seen = [R]         [R, firstEl]
+     *            
+     * 
+     * for (let n of current.adjacent) H => [M, T, R]
+     *    if !seen.has(n) 
+     *        add n to seen
+     *        add n to visitStack
+     * 
+     * 
+     *    // build graph
+    //
+    //            R
+    //         /  |  \
+    //        I - T - H
+    //                |
+    //                M
+    //
+     *  
+     */
 
-    for (let neighbor of start.adjacent) {
-      if (!seen.has(neighbor)) {
-        seen.add(neighbor);
-        counter += 1;
-        if (this.distanceOfShortestPath(neighbor, end, seen, counter)) {
-          return counter;
+
+
+
+
+    if (start === end) return 0;
+
+    let visited = new Set(); // [R, I, T, H, m]
+
+    // enqueued: [vertex, distance]
+    // distance from start vertex to this vertex
+    let queue = [[start, 0]]; // 
+
+    while (queue.length) {
+      let [currentVertex, distance] = queue.shift(); // [M, 2]
+
+      if (currentVertex === end) return distance; // M === M, 2 
+
+      for (let neighbor of currentVertex.adjacent) {  // H => R, T, M
+        if (!visited.has(neighbor)) {
+          visited.add(neighbor);
+          queue.push([neighbor, distance + 1]);
         }
       }
     }
-    
-    console.log(counter);
-    return counter;
   }
 }
 
-let graph = new Graph();
+// let graph = new Graph();
 
-    let r = new Node("R");
-    let i = new Node("I");
-    let t = new Node("T");
-    let h = new Node("H");
-    let m = new Node("M");
+// let r = new Node("R");
+// let i = new Node("I");
+// let t = new Node("T");
+// let h = new Node("H");
+// let m = new Node("M");
 
-    graph.addVertices([r, i, t, h, m]);
+// graph.addVertices([r, i, t, h, m]);
 
-    graph.addEdge(r, i);
-    graph.addEdge(r, t);
-    graph.addEdge(r, h);
-    graph.addEdge(i, t);
-    graph.addEdge(t, h);
-    graph.addEdge(h, m);
+// graph.addEdge(r, i);
+// graph.addEdge(r, t);
+// graph.addEdge(r, h);
+// graph.addEdge(i, t);
+// graph.addEdge(t, h);
+// graph.addEdge(h, m);
 
-graph.distanceOfShortestPath(r,m)
+// graph.distanceOfShortestPath(r, m)
 
 module.exports = { Graph, Node }
 
